@@ -1,0 +1,27 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+	int n;
+	cin>>n;
+	int start[n+1];
+	int end[n+1];
+	for(int i=0;i<n;i++){
+	    int x;
+	    int dur;
+	    cin>>x>>dur;
+	    start[i] = x;
+	    end[i] = x+dur;
+	}
+	sort(end,end+n);
+	int count = 1;
+	int j=0;
+	for(int i=1;i<n;i++){
+	    if(start[i]>=end[j]){
+	        j=i;
+	        count++;
+	    }
+	}
+	std::cout<<count<<endl;
+}
