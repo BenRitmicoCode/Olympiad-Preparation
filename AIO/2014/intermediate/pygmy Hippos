@@ -1,0 +1,25 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main() {
+    ifstream fin("hippoin.txt");
+    ofstream fout("hippoout.txt");
+	int n;
+	fin>>n;
+	int arr[3];
+	for(int i=0;i<3;i++){
+	    fin>>arr[i];
+	}
+	int leftmost = arr[0] -1;
+	int midOne = arr[1]-arr[0]-1;
+	int midTwo = arr[2]-arr[1]-1;
+	int rightmost = n-arr[2];
+	int ans = 0;
+	ans = max(ans,leftmost+midOne);
+	ans = max(ans,leftmost+midTwo);
+	ans = max(ans, rightmost+midOne);
+	ans = max(ans,rightmost+midTwo);
+	ans = max(ans, rightmost+leftmost);
+	fout<<ans;
+}
