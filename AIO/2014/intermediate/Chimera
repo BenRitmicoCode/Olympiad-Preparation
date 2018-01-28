@@ -1,0 +1,56 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main() {
+    ifstream fin("chimin.txt");
+    ofstream fout("chimout.txt");
+    //41 points
+	int n;
+	fin>>n;
+	string lion;
+	string snake;
+	string goat;
+	fin>>lion;
+	fin>>snake;
+	fin>>goat;
+	int l = 0;
+	int s = 0;
+	int g = 0;
+	int none = 0;
+	for(int i=0;i<n;i++){
+	    if(lion[i] == snake[i] && snake[i] == goat[i]){
+	        l++;
+	        s++;
+	        g++;
+	    }
+	    else if(lion[i] == snake[i]){
+	        l++;
+	        s++;
+	    }
+	    else if(lion[i] == goat[i]){
+	        l++;
+	        g++;
+	    }
+	    else if(goat[i] == snake[i]){
+	        g++;
+	        s++;
+	    }else{
+	        none++;
+	    }
+	}
+	for(int i=0;i<none;i++){
+	    if(l<=s && l<=g){
+	        l++;
+	    }
+	    else if(s<=l && s<=g){
+	        s++;
+	    }
+	    else if(g<=l && g<=s){
+	        g++;
+	    }
+	}
+	int ans = 0;
+    ans = min(min(l,s),g);
+	fout<<ans<<endl;
+}
