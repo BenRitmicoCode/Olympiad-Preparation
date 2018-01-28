@@ -1,0 +1,97 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+int main() {
+	int t;
+	cin>>t;
+	while(t--){
+	    int n,m;
+	    cin>>n>>m;
+	    int grid[n+1][m+1];
+	    vector< pair<int,int> > v1;
+	    char dp[n+1][m+1];
+	    int dp2[n+1][m+1];
+	    bool visited[n+1][m+1]={false};
+	    priority_queue<pair<int,int>> q1;
+	    for(int i=0;i<n;i++){
+	        for(int j=0;j<m;j++){
+	            cin>>grid[i][j];
+	            visited[i][j] = false;
+	            //std::cout<<"here"<<endl;
+	            dp2[i][j] = grid[i][j];
+	            if(grid[i][j]>0){
+	                q1.push(make_pair(grid[i][j]+1,i*m+j));
+	                //std::cout<<i<<" "<<j<<endl;
+	                //dp[i][j] = "Y";
+	                
+	                dp2[i][j] = grid[i][j]+1;
+	            }
+	        }
+	    }
+	    
+        while(!q1.empty()){
+           
+	       int i = (q1.top().second)/m;
+	       int j = (q1.top().second)%m;
+	       
+	       // std::cout<<i<<" "<<j<<" "<<visited[i][j]<<endl;
+	       q1.pop();
+	       if(visited[i][j] == true){
+	           continue;
+	       }
+              visited[i][j] = true;  
+	     
+    	   if(i-1>=0 && grid[i-1][j]!=-1){
+        	   if( dp2[i-1][j]<dp2[i][j]-1){
+        	       q1.push(make_pair(dp2[i][j]-1,(i-1)*m+j));
+        	   }
+        	   dp2[i-1][j] = max(dp2[i-1][j],dp2[i][j]-1);
+        	            
+    	   }
+    	        if(i+1<n && grid[i+1][j]!=-1){
+    	            if( dp2[i+1][j]<dp2[i][j]-1){
+    	                q1.push(make_pair(dp2[i][j]-1,(i+1)*m+j));
+    	            }
+    	            dp2[i+1][j] = max(dp2[i+1][j],dp2[i][j]-1);
+    	            
+    	        }
+    	        if(j-1>=0 && grid[i][j-1]!=-1){
+    	            if(dp2[i][j-1]<dp2[i][j]-1){
+    	                q1.push(make_pair(dp2[i][j]-1,(i*m)+(j-1)));
+    	            }
+    	            dp2[i][j-1] = max(dp2[i][j-1],dp2[i][j]-1);
+    	            
+    	        }
+    	        if(j+1<m && grid[i][j+1]!=-1){
+    	            
+    	            if(dp2[i][j+1]<dp2[i][j]-1){
+    	                
+    	                q1.push(make_pair(dp2[i][j]-1,i*m+(j+1)));
+    	            }
+    	           // std::cout<<i<<" "<<j<<endl;
+    	            dp2[i][j+1] = max(dp2[i][j+1],dp2[i][j]-1);
+    	            
+    	        }
+	        }
+	    for(int i=0;i<n;i++){
+	        if(i>0){
+	            std::cout<<endl;
+	        }
+	        for(int j=0;j<m;j++){
+	            if(dp2[i][j] == -1){
+	                std::cout<<"B";
+	            }
+	            else if(dp2[i][j]>0){
+	                std::cout<<"Y";
+	            }
+	            else{
+	                std::cout<<"N";
+	            }
+	        }
+	    }
+	    std::cout<<endl;
+	}
+	
+}
