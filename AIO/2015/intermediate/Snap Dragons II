@@ -1,0 +1,15 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main() {
+    ifstream fin("snapin.txt");
+    ofstream fout("snapout.txt");
+	int r,c,rr,rc,sr,sc;
+	fin>>r>>c>>rr>>rc>>sr>>sc;
+	if(((rr-sr)+(rc-sc))%2 == 0){
+	    fout<<"SCARLET"<<endl;
+	}else{
+	    fout<<"ROSE"<<endl;
+	}
+}
