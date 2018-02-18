@@ -1,0 +1,116 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+using namespace std;
+
+vector<int> arr[100100];
+int store;
+bool check = false;
+bool visited[100010] = {false};
+int dfs(int num){
+    for(int i=0;i<arr[num].size();i++){
+        int dest = arr[num][i];
+        if(visited[dest] == false){
+            visited[dest] = true;
+            store++;
+            if(arr[dest].size()<2){
+                check = true;
+            }
+            dfs(dest);
+        }
+    }
+}
+int main() {
+    ifstream fin("ruckusin.txt");
+    ofstream fout("ruckusout.txt");
+	int n,l,k,m;
+	fin>>n>>l>>k>>m;
+	
+	for(int i=0;i<l;i++){
+	    int a,b;
+	    fin>>a>>b;
+	    arr[a].push_back(b);
+	    arr[b].push_back(a);
+	}
+	vector<int> pusharr;
+	vector<int> pushcircle;
+	for(int i=1;i<=n;i++){
+	    store = 0;
+	    check = false;
+	    if(visited[i] == false){
+	        dfs(i);
+	        if(store == 0 && m==1){
+	            pusharr.push_back(store+1);
+	        }
+	        if(check == true){
+	            if(store>=m){
+	                pusharr.push_back(store);
+	            }
+	        }else{
+	             if(store>=m){
+	                pushcircle.push_back(store);
+	             }
+	        }
+	    }
+	    
+	}
+    sort(pusharr.begin(),pusharr.end());
+	sort(pushcircle.begin(),pushcircle.end());
+	reverse(pusharr.begin(),pusharr.end());
+	reverse(pushcircle.begin(),pushcircle.end());
+    int final = (pusharr.size())+pushcircle.size();
+	for(int i=0;i<pusharr.size();i++){
+	   int temp = pusharr[i]/m;
+	   int newtemp;
+	   if(temp>1){
+	    k-=(temp-1);
+	    final+= (temp-1);
+	   }
+	   
+	   
+	   if(k<0){
+	       
+	       k+=(temp-1);
+	       final-=(temp-1);
+	       while(k--){
+	           final++;
+	       }
+	   }
+	   if(k<=0){
+	       break;
+	   }
+	}
+	for(int i=0;i<pushcircle.size();i++){
+	    if(k<=0){
+	       break;
+	   }
+	   int temp = pushcircle[i]/m;
+	   int newtemp;
+	   if(temp>1){
+	    k-=(temp);
+	    final+= (temp-1);
+	    //std::cout<<final<<" "<<k<<endl;
+	   }
+	   
+	   if(k<0){
+	       
+	       k+=(temp);
+	       final-=(temp-1);
+	       //std::cout<<k<<" "<<final<<endl;
+	       int balance = 0;
+	       while(k--){
+	           balance++;
+	           if(balance>1){
+	                final++;
+	           }
+	           if(k==0){
+	               break;
+	           }
+	       }
+	       
+	   }
+	  
+	}
+	fout<<final<<endl;
+}
