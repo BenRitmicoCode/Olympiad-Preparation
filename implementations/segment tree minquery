@@ -1,0 +1,38 @@
+#include <iostream>
+using namespace std;
+
+
+void construct(int seg[],int arr[],int start,int end,int curr){
+    if(start == end){
+        seg[curr] = arr[start];
+        //std::cout<<curr<<" "<<seg[curr]<<endl;
+        return;
+    }
+    int mid = (start+end)/2;
+    construct(seg,arr,start,mid,(2*curr)+1);
+    construct(seg,arr,mid+1,end,(2*curr)+2);
+    seg[curr] = min(seg[(2*curr)+1],seg[(2*curr)+2]);
+    //std::cout<<curr<<" "<<seg[curr]<<endl;
+}
+int queries(int seg[],int qstart,int qend, int start, int end, int curr){
+    if(qstart<=start && qend >= end){
+        return seg[curr];
+    }
+    if(qstart>end||qend<start){
+        return 100000000000000;
+    }
+    int mid = (start+end)/2;
+    return min(queries(seg,qstart,qend,start,mid,(curr*2)+1),queries(seg,qstart,qend,mid+1,end,(curr*2)+2));
+}
+
+int main() {
+    int seg[30];
+    int arr[]={-1,2,4,5,8,4,9,4,0};
+    int n= sizeof(arr)/sizeof(arr[0]);
+    int startquery;
+    int endquery;
+    cin>>startquery>>endquery;
+	construct(seg,arr,0,n-1,0);
+	int store = queries(seg,startquery,endquery,0,n-1,0);
+	std::cout<<store<<endl;
+}
