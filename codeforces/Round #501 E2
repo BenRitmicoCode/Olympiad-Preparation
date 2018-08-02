@@ -1,0 +1,109 @@
+#include <iostream>
+#include <vector>
+#include <tuple>
+
+const int n = 1002;
+const int m = 1002;
+char a[n+1][m+1],b[n+1][m+1];
+int up[n+1][m+1],down[n+1][m+1],left[n+1][m+1],right[n+1][m+1],height[n+1][m+1],width[n+1][m+1];
+
+int main() {
+	int n,m;
+	std::cin>>n>>m;
+	
+	std::vector< std::tuple< int,int,int> > v1;
+	for(int i=1;i<=n;i++){
+
+	    for(int j=1;j<=m;j++){
+	        std::cin>>a[i][j];
+	       
+	    }
+	}
+
+//	std::cout<<b[1][1]<<endl;
+	for(int i=1;i<=n;i++){
+	    for(int j=1;j<=m;j++){
+	        if(a[i][j] == '*'){
+	            up[i][j] = up[i-1][j]+1;
+	            //std::cout<<i<<" "<<j<<" "<<up[i][j]<<endl;
+	        }
+	    }
+	}
+	for(int i=n;i>=1;i--){
+	    for(int j=1;j<=m;j++){
+	        if(a[i][j] =='*'){
+	            down[i][j] = down[i+1][j]+1;
+	            //std::cout<<i<<" "<<j<<" "<<down[i][j]<<endl;
+	        }
+	    }
+	}
+	for(int i=1;i<=n;i++){
+	    for(int j=1;j<=m;j++){
+	        if(a[i][j] == '*'){
+	            left[i][j] = left[i][j-1]+1;
+	            //std::cout<<i<<" "<<j<<" "<<left[i][j]<<endl;
+	        }
+	    }
+	}
+	for(int i=1;i<=n;i++){
+	    for(int j=m;j>=1;j--){
+	        if(a[i][j] == '*'){
+	            right[i][j] =right[i][j+1]+1;
+	        }
+	    }
+	}
+
+	for(int i=1;i<=n;i++){
+	    for(int j=1;j<=m;j++){
+             b[i][j] = '.';
+	        if(a[i][j] == '*'){
+    	        int x = std::min(std::min(up[i][j],left[i][j]),std::min(right[i][j],down[i][j]));
+    	        if(x != 1 && x!=0){
+    	           
+    	            b[i][j] = '*';
+    	            x--;
+    	            height[i-x][j]++;
+    	            height[i+x+1][j]--;
+    	            width[i][j-x]++;
+    	            width[i][j+x+1]--;
+    	            
+    	            if(x>0){
+    	                 //std::cout<<i<<" "<<j<<" "<<x<<"test"<<std::endl;
+    	                v1.push_back(std::make_tuple(i,j,x));
+    	            }
+    	        }
+	        }
+	    }
+	}
+	for(int i=1;i<=n;i++){
+	    for(int j=1;j<=m;j++){
+	        //std::cout<<i<<" "<<j<<" "<<width[i][j]<<" "<<height[i][j]<<endl;
+	        height[i][j] += height[i-1][j];
+	        width[i][j] +=width[i][j-1];
+	            
+	        if(height[i][j] >0 || width[i][j] > 0){
+	            
+	            b[i][j] = '*';
+	            
+	        }
+	        	        
+	    }
+	}
+	for(int i=1;i<=n;i++){
+	   
+	    for(int j=1;j<=m;j++){
+
+	        if(a[i][j] != b[i][j]){
+	            
+	            std::cout<<-1<<std::endl;
+	            return 0;
+	        }
+	    }
+	}
+	std::cout<<v1.size()<<std::endl;
+	for(int i=0;i<v1.size();i++){
+	    int c,d,e;
+	    std::tie(c,d,e) = v1[i];
+	    std::cout<<c<<" "<<d<<" "<<e<<std::endl;
+	}
+}
