@@ -1,0 +1,54 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+	long long n,m;
+	cin>>n>>m;
+	long long a[n+1];
+	long long b[n+1];
+	long long prefixb[n+1];
+	long long diff[n+1];
+	for(int i=0;i<n;i++){
+	    cin>>a[i]>>b[i];
+	    diff[i] = a[i] - b[i];
+	}
+	long long ans = n+1;
+	prefixb[0] = b[0];
+	if(prefixb[0]>m){
+	    ans = -1;
+	}
+	for(int i=1;i<n;i++){
+	    prefixb[i] = prefixb[i-1]+b[i];
+	    if(prefixb[i]>m){
+	        ans = -1;
+	        break;
+	    }	
+
+	}
+	if(prefixb[n-1] == m){
+	    ans = n;
+	}
+	if(ans == n+1){
+        sort(diff,diff+n);
+        long long temp = prefixb[n-1];
+        ans = n;
+        for(int i=0;i<n;i++){ 
+           temp+=diff[i];
+           //std::cout<<temp<<endl;
+    	       if(temp<=m){
+    	           ans--;
+    	       }else{
+    	           break;
+    	       }
+    	   }
+    	   if(ans == n && ans!=1){
+    	       ans = 0;
+    	   }
+    	   if(n==1 && m<=b[0]){
+    	       ans = 1;
+    	   }
+	}    
+
+	std::cout<<ans<<endl;
+}
