@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n;
+    cin>>n;
+    string a,b;
+    cin>>a;
+    cin>>b;
+    int swaps = 0;
+    int i = 0;
+    int arr[n+1];
+    bool solved = false;
+    vector<int> v1;
+    if(a==b){
+        std::cout<<0<<endl;
+        solved= true;
+    }
+    
+    string storea = a;
+    sort(storea.begin(),storea.end());
+    string storeb = b;
+    sort(storeb.begin(),storeb.end());
+    if(storea != storeb){
+        if(solved == false){
+            std::cout<<-1<<endl;
+            solved = true;
+        }
+    }
+    if(solved == false){
+        while(i<n){
+        int j = i;
+        while(a[j] != b[i]){
+            j++;
+        }
+        //std::cout<<i<<" "<<j<<endl;
+        while(j>i){
+            swaps++;
+            char c= a[j-1];
+            a[j-1] = a[j];
+            
+            a[j] = c;
+            v1.push_back(j);
+            j--;
+            
+        }
+       
+        i++;
+    }
+    }
+    if(solved == false){
+        std::cout<<swaps<<endl;
+        solved = true;
+        for(int i=0;i<v1.size();i++){
+            std::cout<<v1[i]<<" ";
+        }
+    }
+    
+}
