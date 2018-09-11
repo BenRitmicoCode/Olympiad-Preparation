@@ -1,0 +1,47 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int fathers[100];
+int anc(int x){
+    if(fathers[x]==x){
+       return x;
+    }
+   
+    return anc(fathers[x]);
+}
+int unite(int a, int b){
+    int x = anc(a);
+    int y = anc(b);
+    fathers[x] = y;
+}
+int main() {
+	for(int i=0;i<100;i++){
+	    fathers[i] = i;
+	}
+	int n,m;
+	int a,b,w;
+	cin>>n>>m;
+	vector<pair<int,pair<int,int>>> edges;
+	for(int i=0;i<m;i++){
+	    cin>>a>>b>>w;
+	    edges.push_back(make_pair(w,make_pair(a,b)));
+	}
+	sort(edges.begin(),edges.end());
+	int mst_index = 0;
+	int mst_edges = 0;
+	int mst_weight = 0;
+	while(mst_edges<n-1||mst_index<m){
+	    a = edges[mst_index].second.first;
+	    b = edges[mst_index].second.second;
+	    w = edges[mst_index].first;
+	    if(anc(a)!=anc(b)){
+	        unite(a,b);
+	        mst_weight+=w;
+	       // std::cout<<a<<" "<<b<<" "<<mst_weight<<endl;
+	        mst_edges++;
+	    }
+	     mst_index++;
+	}
+	std::cout<<mst_weight<<endl;
+}
