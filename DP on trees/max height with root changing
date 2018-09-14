@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+vector<int> arr[100001];
+int in[100001];
+int out[100001];
+
+void indfs(int curr, int par){
+    in[curr] = 0;
+    for(int i=0;i<arr[curr].size();i++){
+        if(arr[curr][i] == par){
+            continue;
+        }
+        indfs(arr[curr][i],curr);
+        in[curr] = max(in[curr],in[arr[curr][i]]+1);
+    }
+}
+void outdfs(int curr,int par){
+    int mx1= -1;
+    int mx2 = -1;
+    for(int i=0;i<arr[curr].size();i++){
+        if(arr[curr][i] == par){
+            continue;
+        }
+        if(in[arr[curr][i]]>=mx1){
+            mx2= mx1;
+            mx1 = in[arr[curr][i]];
+        }else if(in[arr[curr][i]]>mx2){
+            mx2 = in[arr[curr][i]];
+        }
+    }
+    for(int i=0;i<arr[curr].size();i++){
+        if(arr[curr][i] == par){
+            continue;
+        }
+        int use = mx1;
+        if(mx1 == in[arr[curr][i]]){
+            use = mx2;
+        }
+        out[arr[curr][i]] = max(1+out[curr],2+use);
+        outdfs(arr[curr][i],curr);
+    }
+}
+int main() {
+    int n;
+    cin>>n;
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        arr[a].push_back(b);
+        arr[b].push_back(a);
+    }
+    indfs(1,0);
+    outdfs(1,0);
+    for(int i=1;i<=n;i++){
+        std::cout<<max(in[i],out[i])<<" ";
+    }
+}
