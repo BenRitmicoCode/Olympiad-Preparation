@@ -1,0 +1,74 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+struct node{
+    long long prefix;
+    long long suffix;
+    long long sum;
+    long long ans;
+};
+long long a[100100];
+node tree[4*(100100) +20];
+
+void build(long long nodes,long long start,long long end){
+    if(start == end){
+        tree[nodes].prefix = a[start];
+        tree[nodes].suffix = a[start];
+        tree[nodes].sum = a[start];
+        tree[nodes].ans = a[start];
+        
+    }else{
+        long long mid = (start+end)/2;
+        build(2*nodes,start,mid);
+        build(2*nodes+1,mid+1,end);
+        tree[nodes].prefix = max(tree[2*nodes].prefix,tree[2*nodes].sum+tree[2*nodes+1].prefix);
+        tree[nodes].suffix = max(tree[2*nodes+1].suffix, tree[2*nodes+1].sum+tree[2*nodes].suffix);
+        tree[nodes].sum = tree[2*nodes].sum+tree[2*nodes+1].sum;
+        tree[nodes].ans = max(tree[2*nodes].ans,max(tree[2*nodes+1].ans,tree[2*nodes].suffix+tree[2*nodes+1].prefix));
+       //  std::fout<<start<<" "<<end<<" "<<tree[nodes].ans<<endl;
+    }
+    
+}
+
+node query(long long nodes,long long start,long long end,long long l, long long r){
+    if(r<start||end<l){
+        node temp;
+        temp.prefix =-10000000;
+        temp.suffix =-10000000;
+        temp.sum = -10000000;
+        temp.ans = -10000000;
+        return temp;
+    }else{
+        if(l<=start && end<=r){
+            return tree[nodes];
+        }
+        long long mid = (start+end)/2;
+        
+        node p1 = query(2*nodes,start,mid,l,r);
+        node p2 = query(2*nodes+1,mid+1,end,l,r);
+        node temp;
+        temp.prefix = max(p1.prefix,p1.sum+p2.prefix);
+        temp.suffix = max(p2.suffix, p2.sum+p1.suffix);
+        temp.sum = p1.sum+p2.sum;
+        temp.ans = max(p1.ans,max(p2.ans,p1.suffix+p2.prefix));
+        
+        return temp;
+    }
+}
+int main() {
+ 
+    ifstream fin("sequencequery.in");
+    ofstream fout("sequencequery.out");
+	long long n,m;
+	fin>>n>>m;
+	for(long long i=1;i<=n;i++){
+	    fin>>a[i];
+	}
+	build(1,1,n);
+	for(long long i=0;i<m;i++){
+	    long long l,r;
+	    fin>>l>>r;
+	    node hold = query(1,1,n,l,r);
+	    fout<<hold.ans<<"\n";
+	}
+}
