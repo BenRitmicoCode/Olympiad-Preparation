@@ -1,0 +1,117 @@
+//https://codeforces.com/contest/1093/problem/D
+
+#include <iostream>
+#include <bits/stdc++.h> 
+
+using namespace std;
+vector<int> arr[300100];
+int color[300100];
+int n,m;
+long long n1 = 0;
+long long n2 = 0;
+bool possible = true;
+void colorGraph(int pos,int c1,int c2){
+ 
+    color[pos] = c1;
+    for(auto x:arr[pos]){
+        if(color[x] == c1){
+            possible = false;
+        }
+        if(color[x] == -1){
+            colorGraph(x,c2,c1);
+        }
+    }
+}
+
+void dfs(int curr,int c1,int c2, int par){
+   
+    if(color[curr] == c1){
+        n1++;
+    }else{
+        n2++;
+    }
+    color[curr] = -1;
+    for(auto x:arr[curr]){
+        
+        if(x!=par && color[x]!= -1){
+            dfs(x,c1,c2,curr);
+        }
+    }
+}
+void isbipartite(){
+    for(int i=0;i<=n;i++){
+        color[i] = -1;
+    }
+    for(int i=1;i<=n;i++){
+        if(color[i] == -1){
+            colorGraph(i,1,2); 
+        }
+    }
+    
+}
+long long mod = 998244353;
+
+long long power(long long x, long long y, long long p) 
+{ 
+    long long res = 1;     
+  
+    x = x % p;  
+  
+    while (y > 0) 
+    { 
+        
+        if (y & 1) 
+            res = (res*x) % p; 
+  
+    
+        y = y>>1; 
+        x = (x*x) % p;   
+    } 
+    return res; 
+} 
+int main() {
+    int t;
+    cin>>t;
+    while(t--){
+       
+        cin>>n>>m;
+       
+        for(int i=0;i<m;i++){
+            int x,y;
+            cin>>x>>y;
+            arr[x].push_back(y);
+            arr[y].push_back(x);
+        }
+        isbipartite();
+        if(!possible){
+            possible=true;
+            cout<<0<<endl;
+            for(int i=0;i<=n;i++){
+                arr[i].clear();
+                color[i] = -1;
+            }
+            continue;
+        }
+      
+        long long ans =1;
+        for(int i=1;i<=n;i++){
+            if(color[i]!=-1){
+                n1 = 0;
+                n2 = 0;
+                dfs(i,1,2,i);
+                ans = (ans * (power(2,n1,998244353)+power(2,n2,998244353))%998244353)%998244353;
+            }
+        }
+        
+       cout<<ans<<endl;
+        for(int i=0;i<=n;i++){
+            arr[i].clear();
+           
+            color[i] = -1;
+        }
+        possible = true;
+        
+        
+    }
+    
+}
