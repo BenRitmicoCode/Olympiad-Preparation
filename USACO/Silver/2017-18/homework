@@ -1,0 +1,34 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main() {
+    ifstream fin("homework.in");
+    ofstream fout("homework.out");
+	long long n;
+	fin>>n;
+	long long arr[n+1];
+	for(long long i=0;i<n;i++){
+	    fin>>arr[i];
+	}
+	long long pref[n+1];
+	pref[0] = arr[0];
+	for(long long i=1;i<n;i++){
+	    pref[i] = pref[i-1]+ arr[i];
+	}
+	long long minsuff[n+1];
+	minsuff[n-1] = arr[n-1];
+	for(long long i=n-2;i>=0;i--){
+	    minsuff[i] = min(minsuff[i+1],arr[i]);
+	}
+	double ans = 0;
+	for(long long i=1;i<n-1;i++){
+	    ans = max(ans,(double)((pref[n-1]-pref[i-1])-(minsuff[i]))/((n-1)-i));
+	   // fout<<i<<" "<<ans<<endl;
+	}
+	for(long long i=1;i<n-1;i++){
+	    if((double)((pref[n-1]-pref[i-1])-(minsuff[i]))/((n-1)-i) == ans){
+	        fout<<i<<endl;
+	    }
+	}
+}
