@@ -1,0 +1,97 @@
+#include <iostream>
+#include <set>
+#include <algorithm>
+#include <fstream>
+#include <vector>
+
+using namespace std;
+const int MAXN = 100010;
+
+int A[2*MAXN];
+vector<int> que;
+int dist[2*MAXN];
+int B[2*MAXN];
+struct cmpA{
+  bool operator()(int a,int b) const{
+      return B[a]<B[b];
+  }  
+};
+struct cmpB{
+  bool operator()(int a,int b) const{
+      return A[a]<A[b];
+  }  
+};
+multiset<int,cmpA> s1;
+multiset<int,cmpB> s2;
+
+
+int main() {
+    ifstream fin("piepie.in");
+    ofstream fout("piepie.out");
+	int n,d;
+	fin>>n>>d;
+	for(int i=0;i<2*n;i++){
+	    fin>>A[i]>>B[i];
+	    A[i] = -A[i];
+	    B[i] = -B[i];
+	    dist[i] = -1;
+	}
+	for(int i=0;i<n;i++){
+	    
+	    if(B[i] == 0){
+	        que.push_back(i);
+	        dist[i] = 1;
+	    }else{
+	        s1.insert(i);
+	
+	    }
+	    if(A[i+n] == 0){
+	        que.push_back(n+i);
+	        dist[n+i] = 1;
+	    }else{
+	        s2.insert(n+i);
+	        
+	    }
+	    
+	}
+	int curr = 0;
+	
+	multiset<int,cmpA>::iterator itA;
+	multiset<int,cmpB>::iterator itB;
+
+//	fout<<*itA<<endl;
+	while(curr<que.size()){
+	    int i = que[curr];
+     //   fout<<i<<" "<<curr<<" "<<que.size()<<endl;
+	    if(i<n){
+	        while(1){
+	            itB = s2.lower_bound(i);
+	            
+	            if(itB==s2.end()||A[*itB]>A[i]+d){
+	                break;
+	            }
+	          //  fout<<*itB<<endl;
+	            que.push_back(*itB);
+	            dist[*itB] = dist[i] + 1;
+	            s2.erase(itB);
+	            
+	        }
+	    }else{
+	        while(1){
+	            itA = s1.lower_bound(i);
+	         //   fout<<*itA<<" "<<s1.size()<<endl;
+	            if(itA == s1.end()||B[*itA]>B[i]+d){
+	                break;
+	            }
+	           
+	            que.push_back(*itA);
+	            dist[*itA] = dist[i] + 1;
+	            s1.erase(itA);
+	        }
+	    }
+	    curr++;
+	}
+	for(int i=0;i<n;i++){
+	    fout<<dist[i]<<endl;
+	}
+}
