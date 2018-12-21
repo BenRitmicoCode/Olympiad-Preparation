@@ -1,0 +1,36 @@
+#include <iostream>
+#include <queue>
+#include <fstream>
+#include <vector>
+using namespace std;
+
+int par[100100];
+int to[100100];
+queue<int> q1;
+int main() {
+    ifstream fin("shuffle.in");
+    ofstream fout("shuffle.out");
+	int n;
+	fin>>n;
+	for(int i=0;i<n;i++){
+        fin>>to[i];
+        to[i]--;
+        par[to[i]]++;
+	}
+	int ans = n;
+    for(int i=0;i<n;i++){
+        if(par[i]==0){
+            q1.push(i);
+            ans--;
+        }
+    }
+    while(!q1.empty()){
+        int curr= q1.front();
+        q1.pop();
+        if(--par[to[curr]] == 0){
+            q1.push(to[curr]);
+            ans--;
+        }
+    }
+    fout<<ans<<endl;
+}
