@@ -1,0 +1,75 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+using namespace std;
+const long long N = 410;
+//https://codeforces.com/contest/1101/problem/F
+vector<pair<pair<long long,long long>,pair<long long,long long>>> v1;
+long long n,m;
+long long arr[N];
+bool binsearch(long long x,long long i){
+ 
+        long long starts = v1[i].first.first;
+        long long finish = v1[i].first.second;
+        long long distperc = v1[i].second.first;
+        long long refuels = v1[i].second.second;
+        
+        long long tempx = x;
+        
+        for(long long j=starts;j<finish;j++){
+            tempx-=((arr[j+1]-arr[j])*distperc);
+            if(tempx<0){
+                refuels--;
+                tempx = x;
+                tempx-=((arr[j+1]-arr[j])*distperc);
+                if(tempx<0){
+                    return false;
+                }
+            }
+            if(x == 29){
+               //cout<<i<<" "<<j<<" "<<refuels<<" "<<tempx<<endl;
+            }
+            if(refuels<0){
+                return false;
+            }
+            
+        }
+    
+    return true;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cin>>n>>m;
+    for(long long i=1;i<=n;i++){
+        cin>>arr[i];
+       // cout<<arr[i]<<endl;
+    }
+    for(long long i=0;i<m;i++){
+        long long s,f,c,r;
+        cin>>s>>f>>c>>r;
+        //cout<<s<<" "<<f<<" "<<r<<" "<<c<<endl;
+        v1.push_back(make_pair(make_pair(s,f),make_pair(c,r)));
+    }
+     long long ans = 0;
+     random_shuffle(v1.begin(),v1.end());
+    for(int i=0;i<m;i++){
+        long long l = ans;
+        long long r = 1e18;
+        if(binsearch(ans,i)){
+            continue;
+        }
+        while(l<=r){
+            long long mid = (l+r)/2;
+            if(binsearch(mid,i)){
+                ans = mid;
+                r = mid-1;
+            }else{
+                l = mid+1;
+            }
+        }
+    }
+    cout<<ans<<endl;
+}
