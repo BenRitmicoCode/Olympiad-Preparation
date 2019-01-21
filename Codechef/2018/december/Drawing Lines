@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+const int MAXN = 2010;
+int dp[MAXN][MAXN];
+int dp2[MAXN][MAXN];
+vector<int> v1[MAXN];
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        int n,p;
+        cin>>n>>p;
+        for(int i=0;i<=2000;i++){
+             for(int j=1;j<=2000;j++){
+                 dp[i][j] = 1e9;
+                 v1[i].clear();
+                 dp2[i][j] = 1e9;
+             }
+        }
+        for(int i=0;i<n;i++){
+            int y,s,e;
+            cin>>y>>s>>e;
+            v1[y].push_back(e);
+            sort(v1[y].begin(),v1[y].end());
+        }
+        int count = 0;
+        for(auto x:v1[0]){
+            count++;
+            dp[0][count] = 2*x;
+            dp2[0][count] = x;
+            
+        }
+        dp[0][0] =0;
+        dp2[0][0] = 0;
+    
+        for(int i=1;i<=2000;i++){
+            for(int j=0;j<=n;j++){
+                dp[i][j] = min(dp[i][j],dp[i-1][j]+1);
+                
+              //  cout<<i<<" "<<j<<" "<<dp[i-1][j]<<endl;
+                int count = 0;
+                for(auto x:v1[i]){
+                    count++;
+                    if(count<=j){
+                       // cout<<i<<" "<<j<<" "<<count<<" "<<dp[i][count]<<endl;
+                        dp[i][j] = min(dp[i][j],dp[i-1][j-count]+1+(2*x));
+                        dp2[i][j] = min(dp2[i][j],dp[i-1][j-count]+1+x);
+                        //cout<<i<<" "<<j<<" "<<count<<" "<<dp2[i][count]<<endl;
+    
+                    }
+                    
+                }
+            }
+            
+        }
+      //  cout<<dp[2][1]<<endl;
+        int ans = 0;
+        for(int i=0;i<=2000;i++){
+            for(int j=1;j<=n;j++){
+                if(dp[i][j]<=p){
+                    
+                    ans = max(ans,j);
+                }
+                if(dp2[i][j]<=p){
+                    ans = max(ans,j);
+                }
+            }
+        }
+        cout<<ans<<endl;
+    }
+}
