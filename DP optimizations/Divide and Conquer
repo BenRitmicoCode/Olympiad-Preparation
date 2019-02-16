@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <bits/stdc++.h>
+
+using namespace std;
+const int MAXN = 5005;
+
+long long dp[MAXN][MAXN];
+long long pos[MAXN];
+pair<int,int> holes[MAXN];
+int mouse[MAXN];
+long long getval(int l,int r){
+    return pos[r]-pos[l-1];
+}
+void dnc(int j,int l,int r,int tl,int tr){
+    if(l>r){
+        return;
+    }
+    int mid = (l+r)/2;
+    int optmid = mid-1;
+    dp[j][mid] = dp[j-1][mid];
+    for(int k=min(mid,tr);k>=tl && (mid-k+1)<=holes[j].second;k--){
+        long long temp = dp[j-1][k-1] + getval(k,mid);
+        if(temp<dp[j][mid]){
+            dp[j][mid] = temp;
+            optmid = k;
+        }
+    }
+    dnc(j,l,mid-1,tl,optmid);
+    dnc(j,mid+1,r,optmid,tr);
+}
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int n,m;
+    cin>>n>>m;
+    for(int i=1;i<=n;i++){
+        cin>>mouse[i];
+    }
+    sort(mouse+1,mouse+n+1);
+    for(int i=1;i<=m;i++){
+        cin>>holes[i].first>>holes[i].second;
+    }
+    sort(holes+1,holes+1+m);
+    for(int i=1;i<=n;i++){
+        dp[0][i] = 1e15;
+    }
+    for(int j=1;j<=m;j++){
+        for(int i=1;i<=n;i++){
+            pos[i] = pos[i-1] + abs(mouse[i] - holes[j].first);
+        }
+        dnc(j,1,n,1,n);
+        
+    }
+    if(dp[m][n] == 1e15){
+        dp[m][n] = -1;
+    }
+    cout<<dp[m][n]<<endl;
+}
