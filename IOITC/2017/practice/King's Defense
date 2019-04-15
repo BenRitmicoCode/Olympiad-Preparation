@@ -1,0 +1,72 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+using namespace std;
+
+const long long MAXN =1e5+5;
+
+long long fathers[MAXN];
+long long deg[MAXN];
+long long found[MAXN];
+set<long long> s1;
+long long ans;
+vector<pair<long long,pair<long long,long long>>> edges;
+long long anc(long long x){
+    if(fathers[x]==x){
+       return x;
+    }
+    return fathers[x] = anc(fathers[x]);
+    
+}
+void unite(long long a, long long b){
+    long long x = anc(a);
+    long long y = anc(b);
+    fathers[x] = y;
+}
+int main() {
+    long long n,m,k;
+    cin>>n>>m>>k;
+    for(long long i=0;i<k;i++){
+        long long x;
+        cin>>x;
+        s1.insert(x);
+        
+    }
+    for(long long i=0;i<m;i++){
+        long long x,y,w;
+        cin>>x>>y>>w;
+        edges.push_back(make_pair(w,make_pair(x,y)));
+        deg[x]++;
+        deg[y]++;
+    }
+    sort(edges.begin(),edges.end());
+    for(long long i=1;i<=n;i++){
+        fathers[i] = i;
+    }
+    for(auto x:edges){
+        long long w = x.first;
+        long long u = x.second.first;
+        long long v = x.second.second;
+        //cout<<w<<endl;
+        if(anc(u) == anc(v)){
+            continue;
+        }
+        if(s1.find(u)!=s1.end() && s1.find(v)!=s1.end() && deg[u]>1 && deg[v]>1){
+            continue;
+        }
+        if(found[u] == -1||found[v] == -1){
+            continue;
+        }
+        
+        ans+=w;
+        unite(u,v);
+        if(s1.find(u)!=s1.end()){
+            found[u] = -1;
+        }
+        if(s1.find(v)!=s1.end()){
+            found[v] = -1;
+        }
+    }
+    cout<<ans<<endl;
+}
