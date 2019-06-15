@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+const long long MAXN = 2e5+5;
+vector<pair<long long,long long>> ansv;
+vector<long long> v1[MAXN];
+long long d[MAXN];
+long long u = -1;
+long long dist[MAXN];
+long long ans;
+long long p[MAXN];
+void dfs(long long v){
+    for(long long x:v1[v]){
+        if(x == p[v]){
+            continue;
+        }
+        dist[x]=dist[v]+1;
+        p[x] = v;
+        dfs(x);
+    }
+    if(u==-1||dist[v]>dist[u]){
+        u = v;
+    }
+}
+long long dfs2(long long v,long long dist,long long u,long long p=-1){
+    for(long long x:v1[v]){
+        if(x==p||d[x]){
+            continue;
+        }
+        dfs2(x,dist+1,u,v);
+    }
+    if(!d[v]){
+        ans+=dist;
+        ansv.push_back(make_pair(u,v));
+    }
+}
+int main(){
+    long long n;
+    cin>>n;
+    for(long long i=1;i<n;i++){
+        long long x,y;
+        cin>>x>>y;
+        v1[x].push_back(y);
+        v1[y].push_back(x);
+    }
+    dist[1] = 0;
+    u = -1;
+    dfs(1);
+    long long v = u;
+        
+    p[v] = -1;
+    dist[v]  = 0;
+    u=-1;
+    dfs(v);
+    vector<long long> dim;
+    while(u!=v){
+        dim.push_back(u);
+        d[u] = 1;
+        u = p[u];
+    }
+    dim.push_back(v);
+    
+    d[v] = 1;
+    for(long long i=0;i<dim.size();i++){
+        if(i<(long long)dim.size()-i-1){
+            dfs2(dim[i],(long long)dim.size()-i-1,dim.back());
+        }else{
+            dfs2(dim[i],i,dim[0]);
+        }
+    }
+    for(long long i=0;i<dim.size()-1;i++){
+        ansv.push_back(make_pair(dim.back(),dim[i]));
+    }
+    cout<<ans + (long long)dim.size()*(long long)(dim.size()-1)/2<<endl;
+    for(long long i=0;i<ansv.size();i++){
+        cout<<ansv[i].first<<" "<<ansv[i].second<<" "<<ansv[i].second<<endl;
+    }
+}
