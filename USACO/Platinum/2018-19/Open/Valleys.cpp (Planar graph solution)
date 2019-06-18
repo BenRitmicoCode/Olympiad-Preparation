@@ -1,0 +1,95 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <algorithm>
+using namespace std;
+const long long MAXN = 755;
+pair<long long,long long> g[MAXN][MAXN];
+bool visited[MAXN][MAXN];
+long long sz[MAXN][MAXN];
+long long e[MAXN][MAXN];
+long long s[MAXN][MAXN];
+vector<pair<long long,pair<long long,long long>>> v1;
+long long dx[5] = {1,0,-1,0};
+long long n;
+long long dy[5] = {0,1,0,-1};
+pair<long long,long long> findpar(pair<long long,long long> a){
+    if(g[a.first][a.second] == a){
+        return a;
+    }
+    return g[a.first][a.second] = findpar(g[a.first][a.second]);
+}
+void merge(pair<long long,long long> a,pair<long long,long long> b){
+    a = findpar(a);
+    b = findpar(b);
+    if(a == b){
+        return;
+    }
+    if(sz[a.first][a.second]>sz[b.first][b.second]){
+        swap(a,b);
+    }
+    sz[b.first][b.second]+=sz[a.first][a.second];
+    e[b.first][b.second]+=e[a.first][a.second];
+    s[b.first][b.second]+=s[a.first][a.second];
+    g[a.first][a.second] = b;
+}
+bool check(long long x,long long y){
+    return x>0 && x<=n && y>0 && y<=n;
+}
+bool check2(long long x,long long y){
+    long long ans = 0;
+    for(long long i=0;i<2;i++){
+        for(long long j=0;j<2;j++){
+            if(check(x+i,y+j) && visited[x+i][y+j]){
+                ans++;
+            }
+        }
+    }
+    return ans == 4;
+}
+int main(){
+    ifstream fin("valleys.in");
+    ofstream fout("valleys.out");
+    fin>>n;
+    for(long long i=1;i<=n;i++){
+        for(long long j=1;j<=n;j++){
+            long long h;
+            fin>>h;
+            
+            v1.push_back(make_pair(h,make_pair(i,j)));
+        }
+    }
+    sort(v1.begin(),v1.end());
+    for(long long i=1;i<=n;i++){
+        for(long long j=1;j<=n;j++){
+            sz[i][j] = 1;
+            g[i][j] = make_pair(i,j);
+        }
+    }
+    long long ans = 0;
+    for(auto z:v1){
+        long long x = z.second.first;
+        long long y = z.second.second;
+        visited[x][y] = true;
+        
+        for(long long i=0;i<4;i++){
+            long long x2 = x+dx[i];
+            long long y2 = y+dy[i];
+            if(check(x2,y2) && visited[x2][y2]){
+                merge(make_pair(x,y),make_pair(x2,y2));
+                e[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second]++;
+            }
+        }
+        for(long long i=0;i<2;i++){
+            for(long long j=0;j<2;j++){
+                if(check2(x-i,y-j)){
+                    s[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second]++;
+                }
+            }
+        }
+        if(e[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second]-sz[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second]+2 == s[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second]+1){
+            ans+=sz[findpar(make_pair(x,y)).first][findpar(make_pair(x,y)).second];
+        }
+    }
+    fout<<ans<<endl;
+}
