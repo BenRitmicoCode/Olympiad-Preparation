@@ -1,0 +1,126 @@
+#include <iostream>
+#include <vector>
+#include <map>
+using namespace std;
+const long long MAXN = 3e5;
+long long p[4*MAXN + 5];
+long long s1[4*MAXN + 5];
+long long s2[4*MAXN + 5];
+long long ans = 0;
+long long* where[100*MAXN];
+long long val[100*MAXN];
+long long cur = 0;
+long long res[MAXN+5];
+vector<pair<long long,long long>> t[5*MAXN];
+void change(long long& x,long long y){
+    where[cur] = &x;
+    val[cur] = x;
+    
+    x=y;
+    cur++;
+}
+void rollback(){
+    cur--;
+    if(cur>=0){
+        (*where[cur]) = val[cur];
+        
+    }
+}
+long long get(long long x){
+    if(p[x] == x){
+        return x;
+    }
+    return get(p[x]);
+}
+void merge(long long x,long long y){
+    x=get(x);
+    y = get(y);
+    if(x == y){
+        return;
+    }
+    ans-=(s1[x]*(long long)1*s2[x]);
+    ans-=(s1[y]*(long long)1*s2[y]);
+    if(s1[x]+s2[x]<s1[y]+s2[y]){
+        swap(x,y);
+    }
+    change(p[y],x);
+    change(s1[x],s1[x]+s1[y]);
+    change(s2[x],s2[x]+s2[y]);
+    ans+=(s1[x]*(long long)1*s2[x]);
+}
+void init(){
+    for(long long i=0;i<=MAXN;i++){
+        p[i] = i;
+        
+        s1[i] = 1;
+        
+    }
+    for(long long i=MAXN+1;i<=600000;i++){
+        p[i] = i;
+        s2[i] =1;
+    }
+}
+void update(long long curr,long long l,long long r,long long tl,long long tr,pair<long long,long long> val){
+    
+    if(l>tr||r<tl){
+        return;
+    }
+    
+    if(l>=tl && r<=tr){
+        t[curr].push_back(val);
+      //  cout<<123<<" "<<curr<<" "<<l<<" "<<r<<endl;
+        return;
+        
+    }
+    long long mid = (l+r)/2;
+    update(2*curr,l,mid,tl,tr,val);
+    update(2*curr+1,mid+1,r,tl,tr,val);
+}
+void dfs(long long curr,long long l,long long r){
+    long long last_ans = ans;
+    long long state =cur;
+    for(auto x:t[curr]){
+        merge(x.first,x.second+MAXN);
+        //cout<<curr<<" "<<x.first<<" "<<x.second<<" "<<ans<<endl;
+    }
+    if(l==r){
+        res[l] = ans;
+       // cout<<l<<" "<<last_ans<<" "<<ans<<endl;
+    }else{
+        long long mid = (l+r)/2;
+        dfs(2*curr,l,mid);
+        dfs(2*curr+1,mid+1,r);
+    }
+    while(cur!=state){
+        rollback();
+    }
+    ans = last_ans;
+    
+}
+int main(){
+    long long q;
+    cin>>q;
+    map<pair<long long,long long>,long long> last;
+    for(long long i=1;i<=q;i++){
+        long long x,y;
+        cin>>x>>y;
+        auto p = make_pair(x,y);
+        //cout<<i<<" "<<x<<" "<<y<<endl;
+        if(last.count(p)){
+            update(1,1,q,last[p],i-1,p);
+            //cout<<last[p]<<" "<<i<<endl;
+            last.erase(p);
+        }else{
+            last[p] = i;
+        }
+    }
+    for(auto x:last){
+        update(1,1,q,x.second,q,x.first);
+        
+    }
+    init();
+    dfs(1,1,q);
+    for(long long i=1;i<=q;i++){
+        cout<<res[i]<<" ";
+    }
+}
