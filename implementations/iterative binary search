@@ -1,0 +1,47 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+const int MAXN = 6e5+5;
+    int n;
+    int v[MAXN];
+    int x[MAXN];
+bool check(double mid){
+    double long holdr = 1e18;
+    double long holdl = 0;
+    
+    for(int i=1;i<=n;i++){
+        double a = mid*v[i];
+        
+        double long l = x[i]-a;
+        double long r = x[i]+a;
+        holdl = max(holdl,l);
+        holdr = min(holdr,r);
+    }
+    //cout<<holdl<<" "<<holdr<<endl;
+    return holdl<=holdr;
+}
+int main(){
+
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>x[i];
+    }
+    
+    for(int i=1;i<=n;i++){
+        cin>>v[i];
+    }
+    double l =0;
+    double r = 1000000000;
+    double ans = 0;
+    for(int i=0;i<=60;i++){
+        double mid = (l+r)/2;
+        //cout<<mid<<endl;
+        if(check(mid)){
+            r= mid;
+            ans = mid;
+        }else{
+            l= mid;
+        }
+    }
+    std::cout << std::setprecision(9) <<ans<<endl;
+}
