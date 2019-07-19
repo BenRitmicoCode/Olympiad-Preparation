@@ -1,0 +1,64 @@
+#include <iostream>
+#include <deque>
+#include <vector>
+
+using namespace std;
+int n,m,a,b,g,x,y,z;
+const int MAXN = 3e3+5;
+int mi[MAXN][MAXN];
+deque<int> deq[MAXN];
+
+void ins(deque<int> &de,int val){
+    while(!de.empty() && de.back()>val){
+        de.pop_back();
+    }
+    de.push_back(val);
+}
+void del(deque<int> &de,int val){
+    if(!de.empty() && de.front() == val){
+        de.pop_front();
+    }
+}
+int main(){
+    cin>>n>>m>>a>>b>>g>>x>>y>>z;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            mi[i][j] = g;
+            g= ((g*x)+y)%z;
+        }
+
+    }
+    for(int i=0;i<m;i++){
+        for(int j=0;j<a;j++){
+            ins(deq[i],mi[j][i]);
+        }
+    }
+    deque<int> real_deq;
+    for(int i=0;i<b;i++){
+        ins(real_deq,deq[i].front());
+    }
+    int ans = 0;
+    ans+=real_deq.front();
+    for(int i=b;i<m;i++){
+        del(real_deq,deq[i-b].front());
+        ins(real_deq,deq[i].front());
+        ans+=real_deq.front();
+    }
+    for(int i=a;i<n;i++){
+        for(int j=0;j<m;j++){
+            ins(deq[j],mi[i][j]);
+            del(deq[j],mi[i-a][j]);
+        }
+        deque<int> real_d;
+        for(int j=0;j<b;j++){
+            ins(real_d,deq[j].front());
+        }
+        ans+=real_d.front();
+        for(int j=b;j<m;j++){
+            del(real_d,deq[j-b].front());
+            ins(real_d,deq[j].front());
+            ans+=real_d.front();
+        }
+    }
+    cout<<ans<<endl;
+}
